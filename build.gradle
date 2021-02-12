@@ -19,8 +19,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.ow2.chameleon.org.junit.paxexam:junit-paxexam:4.8.2-0000'
 }
 
-test {
-    useJUnitPlatform()
-}
+//test {
+//    useJUnitPlatform()
+//}
