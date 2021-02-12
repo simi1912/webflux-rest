@@ -1,12 +1,15 @@
 package guru.springframework.webfluxrest.domain;
 
 import jdk.nashorn.internal.ir.annotations.Immutable;
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Document
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id

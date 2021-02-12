@@ -5,7 +5,9 @@ import guru.springframework.webfluxrest.domain.Vendor;
 import guru.springframework.webfluxrest.repositories.CategoryRepository;
 import guru.springframework.webfluxrest.repositories.VendorRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Bootstrap implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
@@ -19,8 +21,20 @@ public class Bootstrap implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        longCategories();
-        loadVendors();
+
+        System.out.println("Bootstrap invoked...");
+
+//        categoryRepository.deleteAll().block();
+//        vendorRepository.deleteAll().block();
+
+        if(categoryRepository.count().block() == 0){
+            System.out.println("#### LOADING DATA ON BOOTSTRAP ####");
+
+            longCategories();
+            loadVendors();
+        } else {
+            System.out.println("Data already loaded...-");
+        }
     }
 
     private void longCategories() {
@@ -39,33 +53,42 @@ public class Bootstrap implements CommandLineRunner {
         Category nuts = new Category();
         nuts.setDescription("Nuts");
 
-        categoryRepository.save(fruits);
-        categoryRepository.save(dried);
-        categoryRepository.save(fresh);
-        categoryRepository.save(exotic);
-        categoryRepository.save(nuts);
+        categoryRepository.save(fruits).block();
+        categoryRepository.save(dried).block();
+        categoryRepository.save(fresh).block();
+        categoryRepository.save(exotic).block();
+        categoryRepository.save(nuts).block();
 
-        System.out.println("Categories Loaded = " + categoryRepository.count() );
+        System.out.println("Categories Loaded = " + categoryRepository.count().block());
     }
 
     private void loadVendors() {
-        Vendor vendor1 = new Vendor();
-        vendor1.setName("Western Tasty Fruits Ltd.");
-        Vendor vendor2 = new Vendor();
-        vendor2.setName("Exotic Fruits Company");
-        Vendor vendor3 = new Vendor();
-        vendor3.setName("Home Fruits");
-        Vendor vendor4 = new Vendor();
-        vendor4.setName("Fun Fresh Fruits Ltd.");
-        Vendor vendor5 = new Vendor();
-        vendor5.setName("Nuts for Nuts Company");
+        Vendor vendor1 = Vendor.builder()
+                .firstName("Joe")
+                .lastName("Buck").build();
 
-        vendorRepository.save(vendor1);
-        vendorRepository.save(vendor2);
-        vendorRepository.save(vendor3);
-        vendorRepository.save(vendor4);
-        vendorRepository.save(vendor5);
+        Vendor vendor2 = Vendor.builder()
+                .firstName("Michael")
+                .lastName("Weston").build();
 
-        System.out.println("Vendors Loaded = " + vendorRepository.count());
+        Vendor vendor3 = Vendor.builder()
+                .firstName("Jessie")
+                .lastName("Waters").build();;
+
+        Vendor vendor4 = Vendor.builder()
+                .firstName("Bill")
+                .lastName("Neri").build();
+
+        Vendor vendor5 = Vendor.builder()
+                .firstName("Jimmy")
+                .lastName("Buffet").build();
+
+        vendorRepository.save(vendor1).block();
+        vendorRepository.save(vendor2).block();
+        vendorRepository.save(vendor3).block();
+        vendorRepository.save(vendor4).block();
+        vendorRepository.save(vendor5).block();
+
+        System.out.println("Vendors Loaded = " + vendorRepository.count().block());
     }
 }
