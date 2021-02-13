@@ -6,10 +6,12 @@ import guru.springframework.webfluxrest.repositories.VendorRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 public class VendorControllerTest {
@@ -44,5 +46,34 @@ public class VendorControllerTest {
         webTestClient.get().uri("/api/v1/vendors/id")
                 .exchange()
                 .expectBody(Category.class);
+    }
+
+    @Test
+    public void create(){
+        BDDMockito.given(vendorRepository.saveAll(any(Publisher.class)))
+                .willReturn(Flux.just(Category.builder().build()));
+
+        Mono<Vendor> vendorToSaveMono = Mono.just(
+                Vendor.builder().firstName("Vendor1").build());
+
+        webTestClient.post().uri("/api/v1/vendors")
+                .body(vendorToSaveMono, Vendor.class)
+                .exchange()
+                .expectStatus().isCreated();
+
+    }
+
+    @Test
+    public void update(){
+        BDDMockito.given(vendorRepository.save(any()))
+                .willReturn(Mono.just(Vendor.builder().build()));
+
+        Mono<Vendor> vendorToUpdateMono = Mono.just(
+                Vendor.builder().firstName("Vendor1").build());
+
+        webTestClient.put().uri("/api/v1/vendors/id")
+                .body(vendorToUpdateMono, Vendor.class)
+                .exchange()
+                .expectStatus().isOk();
     }
 }
