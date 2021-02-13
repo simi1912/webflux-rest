@@ -72,6 +72,39 @@ public class CategoryControllerTest {
                 .body(catToUpdateMono, Category.class)
                 .exchange()
                 .expectStatus().isOk();
+    }
 
+    @Test
+    public void patchWithChanges(){
+        BDDMockito.given(categoryRepository.findById("id"))
+                .willReturn(Mono.just(Category.builder().build()));
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        Mono<Category> catToUpdateMono = Mono.just(Category.builder().description("Cat1").build());
+
+        webTestClient.patch().uri("/api/v1/categories/id")
+                .body(catToUpdateMono, Category.class)
+                .exchange()
+                .expectStatus().isOk();
+
+        BDDMockito.verify(categoryRepository).save(any());
+    }
+
+    @Test
+    public void patchWithoutChanges(){
+        BDDMockito.given(categoryRepository.findById("id"))
+                .willReturn(Mono.just(Category.builder().build()));
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category.builder().description("Cat1").build()));
+
+        Mono<Category> catToUpdateMono = Mono.just(Category.builder().build());
+
+        webTestClient.patch().uri("/api/v1/categories/id")
+                .body(catToUpdateMono, Category.class)
+                .exchange()
+                .expectStatus().isOk();
+
+        BDDMockito.verify(categoryRepository).save(any());
     }
 }
